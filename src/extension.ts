@@ -8,6 +8,7 @@ export function mount() {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  console.log('Congratulations, your extension "field-comment" is now active!');
   registerCommand(context, updateDecorations);
   addEventListener(context, updateDecorations);
 }

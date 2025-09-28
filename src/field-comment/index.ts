@@ -19,6 +19,7 @@ const getDefaultComment = (): string => {
  * @returns
  */
 export function updateDecorations() {
+  console.log('====================updateDecorations=======================');
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
