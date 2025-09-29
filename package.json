@@ -25,6 +25,10 @@
       {
         "command": "fieldComment.toggle",
         "title": "Field Comment Toggle"
+      },
+      {
+        "command": "catCoding.start",
+        "title": "Cat Coding Start"
       }
     ],
     "configuration": {
