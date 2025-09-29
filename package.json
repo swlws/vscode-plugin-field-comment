@@ -29,6 +29,10 @@
       {
         "command": "catCoding.start",
         "title": "Cat Coding Start"
+      },
+      {
+        "command": "catCoding.sendMessage",
+        "title": "Cat Coding Chat"
       }
     ],
     "configuration": {

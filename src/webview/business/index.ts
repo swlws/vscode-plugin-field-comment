@@ -1,27 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-
-const cats = {
-  'Coding Cat': 'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
-  'Compiling Cat': 'https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif',
-  'Testing Cat': 'https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif',
-};
-
-function getWebviewContent(cat: keyof typeof cats) {
-  return `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Cat Coding</title>
-        </head>
-        <body>
-            <img src="${cats[cat]}" width="300" />
-        </body>
-        </html>
-    `;
-}
+import { getWebviewContent } from './render';
+import { cats } from './constant';
 
 /**
  * 更新webview的内容
@@ -58,6 +38,14 @@ function onDidChangeViewState(e: vscode.WebviewPanelOnDidChangeViewStateEvent) {
   }
 }
 
+function onDidReceiveMessage(message: any) {
+  switch (message.command) {
+    case 'alert':
+      vscode.window.showErrorMessage(message.text);
+      return;
+  }
+}
+
 /**
  * 当webview被释放时触发
  */
@@ -82,10 +70,14 @@ export function createOrUpdateWebviewPanel(context: vscode.ExtensionContext) {
       vscode.ViewColumn.One,
       // Webview选项。我们稍后会用上
       {
-        // 只允许webview加载我们插件的`media`目录下的资源
-        localResourceRoots: [
-          vscode.Uri.file(path.join(context.extensionPath, 'src', 'media')),
-        ],
+        // 只允许webview加载我们插件的`media`目录下的资源。网络资源将被阻止。
+        // localResourceRoots: [
+        //   vscode.Uri.file(path.join(context.extensionPath, 'src', 'media')),
+        // ],
+        // 在webview中启用脚本
+        enableScripts: true,
+        // 保留webview内容，即使webview被隐藏
+        retainContextWhenHidden: true,
       }
     );
   }
@@ -95,6 +87,13 @@ export function createOrUpdateWebviewPanel(context: vscode.ExtensionContext) {
 
   // 根据视图状态变动更新内容
   panel.onDidChangeViewState(onDidChangeViewState, null, context.subscriptions);
+
+  // 监听当面板接收到消息的时候触发
+  panel.webview.onDidReceiveMessage(
+    onDidReceiveMessage,
+    null,
+    context.subscriptions
+  );
 
   // 监听当面板被释放的时候将其销毁
   panel.onDidDispose(onDidDispose, null, context.subscriptions);

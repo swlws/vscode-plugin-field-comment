@@ -7,9 +7,27 @@ import { createOrUpdateWebviewPanel } from './business/index';
  * @param context
  */
 export function registerCommand(context: vscode.ExtensionContext) {
-  const command = vscode.commands.registerCommand('catCoding.start', () => {
-    const panel = createOrUpdateWebviewPanel(context);
-  });
+  let panel: vscode.WebviewPanel | undefined;
+  const openPanelCommand = vscode.commands.registerCommand(
+    'catCoding.start',
+    () => {
+      panel = createOrUpdateWebviewPanel(context);
+    }
+  );
+  context.subscriptions.push(openPanelCommand);
 
-  context.subscriptions.push(command);
+  const sendMessageCommand = vscode.commands.registerCommand(
+    'catCoding.sendMessage',
+    () => {
+      if (!panel) {
+        return;
+      }
+
+      panel.webview.postMessage({
+        command: 'message',
+        text: 'Hello World!',
+      });
+    }
+  );
+  context.subscriptions.push(sendMessageCommand);
 }
