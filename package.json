@@ -51,6 +51,14 @@
       {
         "command": "catCoding.sendMessage",
         "title": "Cat Coding Chat"
+      },
+      {
+        "command": "ui.start",
+        "title": "UI Start"
+      },
+      {
+        "command": "ui.sendMessage",
+        "title": "UI Chat"
       }
     ],
     "configuration": {
