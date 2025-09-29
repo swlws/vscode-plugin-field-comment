@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { install as installFieldComment } from './field-comment/index';
-import { install as installWebview } from './webview';
+import { install as installFieldComment } from './interface/field-comment/index';
+import { install as installWebview } from './interface/webview/index';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "field-comment" is now active!');
