@@ -1,25 +1,26 @@
 import * as vscode from 'vscode';
 import state from './state';
+import KeyNoteMapping from './dictionary';
 
 const decorationType = vscode.window.createTextEditorDecorationType({
-  before: {
+  after: {
     margin: '0 1rem 0 0',
     color: '#999999',
     contentText: '',
   },
 });
 
-const getDefaultComment = (): string => {
+const getMapping = (): Record<string, string> => {
   const config = vscode.workspace.getConfiguration('fieldComment');
-  return config.get<string>('defaultComment') || '';
+  const configMap = config.get<Record<string, string>>('mapping') || {};
+
+  return { ...configMap, ...KeyNoteMapping };
 };
 
 /**
  * 更新装饰
- * @returns
  */
 export function updateDecorations() {
-  console.log('====================updateDecorations=======================');
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
@@ -31,20 +32,29 @@ export function updateDecorations() {
 
   const lineCount = editor.document.lineCount;
   const decorations: vscode.DecorationOptions[] = [];
-  const comment = getDefaultComment();
+  const mapping = getMapping();
 
   for (let line = 0; line < lineCount; line++) {
     const lineObj = editor.document.lineAt(line);
-    const range = new vscode.Range(lineObj.range.start, lineObj.range.start);
+    const text = lineObj.text;
 
-    decorations.push({
-      range,
-      renderOptions: {
-        before: {
-          contentText: comment,
-        },
-      },
-    });
+    for (const [key, note] of Object.entries(mapping)) {
+      const index = text.indexOf(key);
+      if (index !== -1) {
+        // 定位到 key 结尾
+        const startPos = lineObj.range.start.translate(0, index + key.length);
+        const range = new vscode.Range(startPos, startPos);
+
+        decorations.push({
+          range,
+          renderOptions: {
+            after: {
+              contentText: ` /* ${note} */`, // 紧跟 key 后面
+            },
+          },
+        });
+      }
+    }
   }
 
   editor.setDecorations(decorationType, decorations);
