@@ -1,12 +1,17 @@
-# field-comment README
+# 插件
 
-工具
+## 为字符串添加注释
 
-```
-npm install -g yo generator-code
-yo code
+- Field Comment Enabled
+- Field Comment Disabled
+- Field Comment Toggle
 
-npm install -g vsce
-vsce package
-vsce publish
-```
+## Webview
+
+- Cat Coding Start
+- Cat Coding Chat
+
+## Web
+
+- UI Start
+- UI Chat
